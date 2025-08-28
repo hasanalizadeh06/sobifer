@@ -37,7 +37,7 @@ export default function Navbar(): React.JSX.Element {
             </Link>
           <ul className="hidden md:flex flex-nowrap pt-4">
             <li className="relative ml-8">
-              <Link href="/" className={`block py-2 ${pathname.slice(3) == "" ? "font-bold" : ""}`}>{t('navigation.interactiveTest')}</Link>
+              <Link href="/" className={`block py-2 ${["/1", "/2", "/3"].includes(pathname.slice(3)) ? "font-bold" : ""}`}>{t('navigation.interactiveTest')}</Link>
             </li>
             <li className="relative ml-8">
               <Link href="/knowledgebase" className={`block py-2 ${pathname.slice(3) == "/knowledgebase" ? "font-bold" : ""}`}>{t('navigation.knowledgeBase')}</Link>

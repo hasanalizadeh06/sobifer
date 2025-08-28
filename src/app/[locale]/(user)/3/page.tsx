@@ -5,83 +5,94 @@ import Image from "next/image";
 import Link from "next/link";
 import doctor_desktop from "@/../public/images/doctor-ru.png";
 
+
+
 export default function HomePage() {
   const t = useTranslations("HomePage");
   const [show, setShow] = useState(true);
   const [style] = useState("success");
   const [message] = useState<string | null>(null);
-  const [hidemenu, setHidemenu] = useState(false);
-  const [open] = useState(false);
   const [selected, setSelected] = useState(0);
-  const [currentanswer, setCurrentanswer] = useState(0);
+  const [currentanswer, setCurrentanswer] = useState("0");
   const [doanswer, setDoanswer] = useState(false);
   const [currentstop, setCurrentstop] = useState(false);
-  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+  const [question, setQuestion] = useState({
+    title:t("video3question1Title"),
+    selectAnswer:t("video3question1SelectAnswer"),
+    answer1:t("video3question1Answer1"),
+    answer2:t("video3question1Answer2"),
+    answer3:t("video3question1Answer3"),
+    answer4:t("video3question1Answer4"),
+    correctAnswer:t("video3question1CorrectAnswer"),
+    correctFeedback:t("video3question1CorrectFeedback"),
+    incorrectFeedback:t("video3question1IncorrectFeedback"),
+    continueButton:t("video3question1ContinueButton"),
+    number: 1
+  });
 
+  
   const video1Ref = useRef<HTMLVideoElement>(null);
   const video2Ref = useRef<HTMLVideoElement>(null);
   const video3Ref = useRef<HTMLVideoElement>(null);
   const videosRef = useRef<HTMLDivElement>(null);
-
-  const videoStops = [125]; // 2:05 in seconds
+  
+  
 
 
   useEffect(() => {
-    // Initialize YouTube API
-    const tag = document.createElement("script");
-    tag.src = "https://www.youtube.com/iframe_api";
-    const firstScriptTag = document.getElementsByTagName("script")[0];
-    if (firstScriptTag && firstScriptTag.parentNode) {
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    }
+  let ytScript: HTMLScriptElement | null = null;
+  let ytPlayer: YT.Player | null = null;
+  let ytTimer: NodeJS.Timeout | null = null;
+  const videoStops = [125]; // 2:05 in seconds
 
-    window.onYouTubeIframeAPIReady = () => {
-      initvideo("V4VbzOCZHXg"); // Use the correct video ID
-    };
-  }, []);
-
-  const initvideo = (videoId: string) => {
-    if (window.YT) {
-      const playerInstance = new window.YT.Player("player", {
-        videoId: videoId,
+    const onYouTubeIframeAPIReady = () => {
+      ytPlayer = new window.YT.Player("player", {
+        videoId: "V4VbzOCZHXg",
         height: "100%",
         width: "100%",
         playerVars: {
           fs: 0,
           rel: 0,
-          origin: "http://localhost:3001",
+          origin: "http://localhost",
         },
         events: {
           onReady: () => {},
           onStateChange: (event: { data: number }) => {
             if (event.data === window.YT.PlayerState.PLAYING) {
-              // Use all states for robust control
-              if (timer) {
-                clearInterval(timer);
-                setTimer(null);
-              }
-              const timerInterval = setInterval(() => {
-                const current = Math.round(playerInstance.getCurrentTime());
-                // Debug: log current time and states
-                // console.log('Current:', current, 'currentstop:', currentstop, 'hidemenu:', hidemenu, 'open:', open, 'selected:', selected);
-                if (videoStops.includes(current) && !currentstop && !hidemenu && !open && selected === 0) {
-                  playerInstance.pauseVideo();
+              ytTimer = setInterval(() => {
+                const current = Math.round(ytPlayer?.getCurrentTime() ?? 0);
+                const stop = videoStops.indexOf(current);
+                if (stop > -1) {
+                  ytPlayer?.pauseVideo();
                   setCurrentstop(true);
-                  setHidemenu(true);
                 }
-              }, 500); // more frequent check
-              setTimer(timerInterval);
-            } else if (event.data === window.YT.PlayerState.PAUSED || event.data === window.YT.PlayerState.ENDED) {
-              if (timer) {
-                clearInterval(timer);
-                setTimer(null);
+              }, 1000); // More frequent check for reliability
+            } else if (event.data === window.YT.PlayerState.PAUSED) {
+              if (ytTimer) {
+                clearInterval(ytTimer);
               }
             }
           },
         },
       });
+    };
+
+    if (!window.YT) {
+      ytScript = document.createElement("script");
+      ytScript.src = "https://www.youtube.com/iframe_api";
+      document.body.appendChild(ytScript);
+      window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+    } else {
+      onYouTubeIframeAPIReady();
     }
-  };
+
+    return () => {
+      // Cleanup timer and player
+      if (ytTimer) clearInterval(ytTimer);
+      if (ytScript) ytScript.remove();
+  delete (window as Partial<Window>).onYouTubeIframeAPIReady;
+    };
+  }, []);
 
   const stopvideos = () => {
     if (videosRef.current) {
@@ -92,31 +103,54 @@ export default function HomePage() {
     }
   };
 
-  const handleAnswer = (answer: number) => {
+  const handleChangeQuestion = (questionNumber: number) => {
+    setQuestion(
+      {
+        title:t(`video3question${questionNumber}Title`),
+        selectAnswer:t(`video3question${questionNumber}SelectAnswer`),
+        answer1:t(`video3question${questionNumber}Answer1`),
+        answer2:t(`video3question${questionNumber}Answer2`),
+        answer3:t(`video3question${questionNumber}Answer3`),
+        answer4:t(`video3question${questionNumber}Answer4`),
+        correctAnswer:t(`video3question${questionNumber}CorrectAnswer`),
+        correctFeedback:t(`video3question${questionNumber}CorrectFeedback`),
+        incorrectFeedback:t(`video3question${questionNumber}IncorrectFeedback`),
+        continueButton:t(`video3question${questionNumber}ContinueButton`),
+        number: questionNumber
+      }
+    )
+  }
+
+  const handleAnswer = (answer: string) => {
     setCurrentanswer(answer);
     stopvideos();
     setDoanswer(true);
 
     // Play corresponding video
-    if (answer === 1 && video1Ref.current) {
+    if (answer === "1" && video1Ref.current) {
       video1Ref.current.load();
       video1Ref.current.play();
-    } else if (answer === 2 && video2Ref.current) {
+    } else if (answer === "2" && video2Ref.current) {
       video2Ref.current.load();
       video2Ref.current.play();
-    } else if (answer === 3 && video3Ref.current) {
+    } else if (answer === "3" && video3Ref.current) {
       video3Ref.current.load();
       video3Ref.current.play();
     }
   };
 
   const nextQuestion = () => {
-    stopvideos();
-    setCurrentanswer(0);
-    setCurrentstop(false);
-    setHidemenu(false);
+    if(question.number < 3){
+      setCurrentanswer("0");
+      handleChangeQuestion(question.number + 1);
+    } else {
+      handleChangeQuestion(1);
+      stopvideos();
+      setCurrentanswer("0");
+      setCurrentstop(false);
+    }
+    console.log(question)
   };
-
   return (
     <div
       className="relative min-h-screen min-w-full z-0"
@@ -283,69 +317,89 @@ export default function HomePage() {
                 currentstop !== false ? "block" : "hidden"
               } fixed overflow-y-scroll lg:absolute p-4 lg:p-0 top-0 left-0 h-full w-full bg-white z-10`}
             >
-              <div className="h-full w-full landscape:flex">
+                <div className="h-full w-full landscape:flex">
                 <div className="mt-4 lg:mt-0 w-full landscape:w-2/3 lg:w-2/3 px-8 py-4 xl:px-12 xl:py-8">
                   <h1 className="lg:text-lg xl:text-2xl font-bold">
-                    {t("questionTitle")}
+                  {question.title}
                   </h1>
                   <div className="lg:mt-4 xl:mt-12 mb-4">
-                    {t("selectAnswer")}
+                  {question.selectAnswer}
                   </div>
                   <ul className="lg:pr-24 pb-4">
-                    <li
-                      className={`${
-                        currentanswer === 1
-                          ? "bg-sorbifer-red"
-                          : "bg-sorbifer-light"
-                      } text-white`}
+                  <li
+                    className={`${
+                    currentanswer === "1"
+                      ? question.correctAnswer == "1" ? "bg-sorbifer-green" : "bg-sorbifer-red"
+                      : "bg-sorbifer-light"
+                    } text-white`}
+                  >
+                    <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleAnswer("1");
+                    }}
+                    className="block w-full h-full p-3 xl:p-4 mb-2 font-bold lg:text-lg xl:text-xl"
                     >
-                      <a
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleAnswer(1);
-                        }}
-                        className="block w-full h-full p-3 xl:p-4 mb-2 font-bold lg:text-lg xl:text-xl"
-                      >
-                        {t("answer1")}
-                      </a>
-                    </li>
-                    <li
-                      className={`${
-                        currentanswer === 2
-                          ? "bg-sorbifer-green"
-                          : "bg-sorbifer-light"
-                      } text-white`}
+                    {question.answer1}
+                    </a>
+                  </li>
+                  <li
+                    className={`${
+                    currentanswer === "2"
+                      ? question.correctAnswer == "2" ? "bg-sorbifer-green" : "bg-sorbifer-red"
+                      : "bg-sorbifer-light"
+                    } text-white`}
+                  >
+                    <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleAnswer("2");
+                    }}
+                    className="block w-full h-full p-3 xl:p-4 mb-2 font-bold lg:text-lg xl:text-xl"
                     >
-                      <a
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleAnswer(2);
-                        }}
-                        className="block w-full h-full p-3 xl:p-4 mb-2 font-bold lg:text-lg xl:text-xl"
-                      >
-                        {t("answer2")}
-                      </a>
-                    </li>
-                    <li
-                      className={`${
-                        currentanswer === 3
-                          ? "bg-sorbifer-red"
-                          : "bg-sorbifer-light"
-                      } text-white`}
+                    {question.answer2}
+                    </a>
+                  </li>
+                  <li
+                    className={`${
+                    currentanswer === "3"
+                      ? question.correctAnswer == "3" ? "bg-sorbifer-green" : "bg-sorbifer-red"
+                      : "bg-sorbifer-light"
+                    } text-white`}
+                  >
+                    <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleAnswer("3");
+                    }}
+                    className="block w-full h-full p-3 xl:p-4 mb-2 font-bold lg:text-lg xl:text-xl"
                     >
-                      <a
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleAnswer(3);
-                        }}
-                        className="block w-full h-full p-3 xl:p-4 mb-2 font-bold lg:text-lg xl:text-xl"
-                      >
-                        {t("answer3")}
-                      </a>
-                    </li>
+                    {question.answer3}
+                    </a>
+                  </li>
+                  { question.answer4 != "" && (
+                    <li
+                    className={`${
+                    currentanswer === "4"
+                      ? question.correctAnswer == "4" ? "bg-sorbifer-green" : "bg-sorbifer-red"
+                      : "bg-sorbifer-light"
+                    } text-white`}
+                  >
+                    <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleAnswer("4");
+                    }}
+                    className="block w-full h-full p-3 xl:p-4 mb-2 font-bold lg:text-lg xl:text-xl"
+                    >
+                    {question.answer4}
+                    </a>
+                  </li>
+                  )}
                   </ul>
                 </div>
 
@@ -354,78 +408,78 @@ export default function HomePage() {
                   ref={videosRef}
                 >
                   <div className="mx-auto w-full portrait:w-1/2 lg:w-full">
-                    <div className="relative pt-1/1 h-0">
-                      <video
-                        playsInline
-                        ref={video1Ref}
-                        className={`${
-                          currentanswer === 1 ? "block" : "hidden"
-                        } w-full absolute top-0 left-0`}
-                      >
-                        <source src="/video/rus/2.1.1.mp4" type="video/mp4" />
-                      </video>
-                      <video
-                        playsInline
-                        ref={video2Ref}
-                        className={`${
-                          currentanswer === 2 ? "block" : "hidden"
-                        } w-full absolute top-0 left-0`}
-                      >
-                        <source src="/video/rus/2.1.2.mp4" type="video/mp4" />
-                      </video>
-                      <video
-                        playsInline
-                        ref={video3Ref}
-                        className={`${
-                          currentanswer === 3 ? "block" : "hidden"
-                        } w-full absolute top-0 left-0`}
-                      >
-                        <source src="/video/rus/2.1.3.mp4" type="video/mp4" />
-                      </video>
-                      <div
-                        className={`absolute top-0 left-0 w-full h-full bg-white/100 transition delay-300 ${
-                          doanswer ? "bg-white/0" : "bg-white/100"
-                        }`}
-                      ></div>
-                    </div>
+                  <div className="relative pt-1/1 h-0">
+                    <video
+                    playsInline
+                    ref={video1Ref}
+                    className={`${
+                      currentanswer === "1" ? "block" : "hidden"
+                    } w-full absolute top-0 left-0`}
+                    >
+                    <source src="/video/rus/2.1.1.mp4" type="video/mp4" />
+                    </video>
+                    <video
+                    playsInline
+                    ref={video2Ref}
+                    className={`${
+                      currentanswer === "2" ? "block" : "hidden"
+                    } w-full absolute top-0 left-0`}
+                    >
+                    <source src="/video/rus/2.1.2.mp4" type="video/mp4" />
+                    </video>
+                    <video
+                    playsInline
+                    ref={video3Ref}
+                    className={`${
+                      currentanswer === "3" ? "block" : "hidden"
+                    } w-full absolute top-0 left-0`}
+                    >
+                    <source src="/video/rus/2.1.3.mp4" type="video/mp4" />
+                    </video>
+                    <div
+                    className={`absolute top-0 left-0 w-full h-full bg-white/100 transition delay-300 ${
+                      doanswer ? "bg-white/0" : "bg-white/100"
+                    }`}
+                    ></div>
+                  </div>
                   </div>
 
                   <div
-                    className={`portrait:text-center mt-8 landscape:mt-4 lg:mt-12 landscape:text-xs lg:text-base ${
-                      currentanswer > 0 ? "block" : "hidden"
+                  className={`portrait:text-center mt-8 landscape:mt-4 lg:mt-12 landscape:text-xs lg:text-base ${
+                    currentanswer != '0' ? "block" : "hidden"
+                  }`}
+                  >
+                  <div
+                    className={`text-sorbifer-green ${
+                    currentanswer == question.correctAnswer ? "block" : "hidden"
                     }`}
                   >
-                    <div
-                      className={`text-sorbifer-green ${
-                        currentanswer === 2 ? "block" : "hidden"
-                      }`}
-                    >
-                      {t("correctAnswer")}
-                    </div>
-                    <div
-                      className={`text-sorbifer-red ${
-                        currentanswer !== 2 ? "block" : "hidden"
-                      }`}
-                    >
-                      {t("incorrectAnswer")}
-                    </div>
+                    {question.correctFeedback}
+                  </div>
+                  <div
+                    className={`text-sorbifer-red ${
+                    currentanswer != question.correctAnswer ? "block" : "hidden"
+                    }`}
+                  >
+                    {question.incorrectFeedback}
+                  </div>
                   </div>
 
                   <div
-                    className={`text-center w-full min-h-20 ${
-                      currentanswer === 2 ? "block" : "hidden"
-                    }`}
+                  className={`text-center w-full min-h-20 ${
+                    currentanswer == question.correctAnswer ? "block" : "hidden"
+                  }`}
                   >
-                    <button
-                      onClick={nextQuestion}
-                      className="inline-block bg-sorbifer-dark rounded-xl landscape:text-xs lg:text-base py-4 px-4 lg:px-8 mt-4 lg:mt-12 font-bold text-white"
-                    >
-                      {t("continueButton")}
-                    </button>
+                  <button
+                    onClick={nextQuestion}
+                    className="inline-block bg-sorbifer-dark rounded-xl landscape:text-xs lg:text-base py-4 px-4 lg:px-8 mt-4 lg:mt-12 font-bold text-white"
+                  >
+                    {question.continueButton}
+                  </button>
                   </div>
                 </div>
+                </div>
               </div>
-            </div>
           </div>
 
           <div className="bg-sorbifer-light text-center py-8 px-12">
@@ -606,7 +660,7 @@ export default function HomePage() {
               </h1>
             </div>
           </div>
-          <Image src="/images/girl.png" width={868} height={668} className="w-full max-w-[868px]" alt="Background" />
+          <Image src="/images/girl.png" width={868} height={688} className="w-full max-w-[868px]" alt="Background" />
           
           <div className="lg:absolute left-0 top-0 right-0 flex justify-center lg:justify-end">
             <div className="px-4 lg:px-32 pt-12 lg:pt-24 flex lg:justify-end">
