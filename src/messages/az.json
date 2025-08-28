@@ -1,0 +1,101 @@
+
+{
+  "HomePage": {
+    "navigation": {
+      "interactiveTest": "İnteraktiv test",
+      "knowledgeBase": "Bilik bazası"
+    },
+    "subtitle": "İnteraktiv klinik təhlil",
+    "title": "ginekoloqlar üçün",
+    "description": "Sizə birinci şəxs kimi <br/> qəbulda iştirak etməyi <br/> və video-kesi həll etməyi <br/> təklif edirik",
+
+    "caseTitle": "Qəbulda çoxdöllü hamiləliklə hamilə qadın",
+    "caseDescription": "Hamilə qadınlarda, xüsusilə çoxdöllü hamiləlik zamanı dəmir çatışmazlığı anemiyasının müalicəsi kompleks və düşünülmüş yanaşma tələb edir. Bu hallarda dəmirə olan tələbatın artması hemoglobin və ferritin səviyyəsinin müntəzəm monitorinqini effektiv terapiyanın vacib şərtinə çevirir.",
+    "step1": "Müəyyən anda ekranda pasiyentin gələcək idarə olunması taktikası ilə bağlı sual görünəcək.",
+    "step2": "Düzgün cavab variantını seçin.",
+    "step3": "Videoya davam etmək üçün “Daha bax” düyməsini klikləyin.",
+
+    "solveCase": "Növbəti kesə keçmək üçün cari klinik hadisəni həll edin.",
+
+    "questionTitle": "Gizli dəmir çatışmazlığının diaqnostikası üçün hansı üsul üstünlük təşkil edir?",
+    "selectAnswer": "Düzgün cavabı seçin",
+    "answer1": "Qanda Hb analizı",
+    "answer2": "Ferritin və TDBQ (OЖСС) tədqiqi",
+    "answer3": "Qarın boşluğu orqanlarının USM",
+    "correctAnswer": "Cavab düzgündür.",
+    "incorrectAnswer": "Cavab səhvdir. Yenidən cəhd edin.",
+    "continueButton": "Daha bax",
+
+    "faqTitle": "Klinik təhlil üzrə <br/> tez-tez verilən suallar",
+    "faq1": "Klinik təhlil nədir?",
+    "faq1Answer": "Bu, videodərs zamanı tədris materialının öyrənilməsi və möhkəmləndirilməsi ilə bağlı interaktiv tədris növüdür; istifadəçiləri diaqnostika çətinlikləri, düzgün diaqnozun qoyulması və müalicə seçimi ilə tanış edir.",
+    "faq2": "Testin nəticələrinə görə hansı kompetensiyalar əldə olunacaq?",
+    "faq2Answer": "Sorğunu keçdikdən sonra həkim əsas kompetensiyalara yiyələnəcək:",
+    "competency1": "Dəmir çatışmazlığının dəqiq diaqnostikası (ferritin, hemoglobin və s.).",
+    "competency2": "Müasir müalicə yanaşmaları və preparat seçimi.",
+    "competency3": "Risk amilləri nəzərə alınmaqla fərdiləşdirilmiş terapiya seçimi.",
+    "competency4": "Risk qruplarında dəmir çatışmazlığının effektiv profilaktikası.",
+    "competency5": "Diaqnostik və terapevtik səhvlərdən yayınma.",
+    "faq3": "Sertifikat əldə etmək üçün nə lazımdır?",
+    "faq3Answer": "Bütün 4 interaktiv klinik videokesi tamamladıqdan sonra iştirakınızı və materialın mənimsənilməsini təsdiqləyən sertifikat əldə edəcəksiniz. Sertifikatlar ixtisasın alınması və ya təsdiqi zamanı keçərlidir.",
+
+    "benefitsTitle": "Dəmir çatışmazlığı <br/> anemiyasında balansı <br/> qoruyaraq",
+    "benefit1": "Yüksək effektivlik",
+    "benefit2": "Dəmirin <br/> mənimsənilməsini <br/> yaxşılaşdırmaq <br/> üçün C vitamini",
+    "benefit3": "Unikal DuruIes® texnologiyası",
+    "benefit4": "Müalicənin yaxşı dözümlülüyü",
+
+    "disclaimer": "TƏYİN VƏ TƏTBİQDƏN ƏVVƏL TƏLİMATLA TANlŞ OLUN",
+    "companyInfo": "“EGIS” ASC ƏCZAÇILIQ ZAVODU",
+    "representation": "Qazaxıstan Respublikasında nümayəndəlik",
+    "address": "Qazaxıstan Respublikası, 050060, Almatı, Jarokov küç. 286 G",
+    "phone": "+7 (727) 247 63 33, +7 (727) 247 63 34, +7 (727) 247 61 41",
+    "email": "egis@egis.kz"
+  }
+  ,
+  "KnowledgeBase": {
+  "title": "Həkimlər üçün rahat tibbi biliklər və tövsiyələr kitabxanası",
+  "subtitle": "Qısa formatda bir platformada",
+  "kbItem1Title": "Auerbach M. və müəlliflər. Böyüklərdə dəmir çatışmazlığı haqqında 10 maraqlı fakt",
+  "kbItem1Date": "Dərc tarixi: 2025",
+  "kbItem1Summary": "Böyüklərdə dəmir çatışmazlığı ilə bağlı müasir tədqiqatlar və klinik müşahidələr əsasında 10 əsas fakt.",
+  "kbItem2Title": "Auerbach M. və müəlliflər. Böyüklərdə dəmir çatışmazlığı: icmal",
+  "kbItem2Date": "Dərc tarixi: 2025",
+  "kbItem2Summary": "Böyüklərdə dəmir çatışmazlığı və dəmir çatışmazlığı anemiyasının diaqnostikası, səbəbləri, simptomları və müalicəsi üzrə müasir məlumatların icmalı.",
+  "kbItem3Title": "Siebenthal H.K. və müəlliflər. Dəmir çatışmazlığı olan qadınlarda ağızdan qəbul edilən dəmir əlavələrindən dəmirin mənimsənilməsinə qida amilləri və günün vaxtının təsiri",
+  "kbItem3Date": "Dərc tarixi: 2023",
+  "kbItem3Summary": "Dəmir çatışmazlığı olan qadınlarda dəmirin mənimsənilməsinə günün vaxtı və qida amillərinin təsirinin araşdırılması.",
+  "kbItem4Title": "Şulyatyeva N.V. və müəlliflər. Gizli dəmir çatışmazlığının patogenetik variantları və H. pylori infeksiyalı xəstələrdə terapiyanın effektivliyi",
+  "kbItem4Date": "Dərc tarixi: 2021",
+  "kbItem4Summary": "H. pylori infeksiyalı xəstələrdə gizli dəmir çatışmazlığının patogenetik variantlarının və terapiyanın effektivliyinin təhlili.",
+  "kbItem5Title": "Timoshnikov V.A. və müəlliflər. Vitamin C və dəmirin redoks qarşılıqlı təsirləri: Deferipron ilə pro-oksidant aktivliyin qarşısının alınması",
+  "kbItem5Date": "Dərc tarixi: 2020",
+  "kbItem5Summary": "Vitamin C və dəmirin qarşılıqlı təsiri və deferipronun pro-oksidant aktivliyi azaltmadakı rolu araşdırılır."
+  },
+  "AdminLogin": {
+      "adminLoginTitle": "Admin Girişi",
+      "emailPlaceholder": "Email",
+      "passwordPlaceholder": "Şifrə",
+      "otpPlaceholder": "OTP Kodu",
+      "loginBtn": "Giriş",
+      "loggingIn": "Giriş edilir...",
+      "verifyBtn": "OTP-ni yoxla",
+      "verifying": "Yoxlanılır...",
+      "resendBtn": "OTP-ni yenidən göndər",
+      "seconds": "san",
+      "otpSent": "OTP göndərildi!",
+      "otpResent": "OTP yenidən göndərildi!",
+      "otpResendFailed": "OTP-ni yenidən göndərmək mümkün olmadı",
+      "loginSuccess": "Giriş uğurla tamamlandı!",
+      "loginFailed": "Giriş uğursuz oldu",
+      "otpFailed": "OTP yoxlanışı uğursuz oldu",
+      "serverError": "Server xətası"
+  },
+  "Admin": {
+    "dashboard": "Panel",
+    "blogs": "Bloqlar",
+    "logout": "Çıxış",
+    "logoutSuccess": "Uğurla çıxış edildi!",
+    "logoutError": "Çıxış uğursuz oldu!"
+  }
+}
