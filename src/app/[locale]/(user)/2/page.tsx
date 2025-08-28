@@ -85,7 +85,7 @@ export default function HomePage() {
     }
 
     window.onYouTubeIframeAPIReady = () => {
-      initvideo("V4VbzOCZHXg"); // Use the correct video ID
+      initvideo("AXHchGrCvVI"); // Use the correct video ID
     };
   }, [initvideo]);
 
@@ -612,7 +612,7 @@ export default function HomePage() {
               </h1>
             </div>
           </div>
-            <Image src="/images/girl.png" className="w-full max-w-[868px]" alt="Background" />
+            <Image src="/images/girl.png" width={868} height={668}  className="w-full max-w-[868px]" alt="Background" />
           
           <div className="lg:absolute left-0 top-0 right-0 flex justify-center lg:justify-end">
             <div className="px-4 lg:px-32 pt-12 lg:pt-24 flex lg:justify-end">

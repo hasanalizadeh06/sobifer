@@ -46,7 +46,7 @@ export default function HomePage() {
 
     const onYouTubeIframeAPIReady = () => {
       ytPlayer = new window.YT.Player("player", {
-        videoId: "AXHchGrCvVI",
+        videoId: "Ll3Xr23xQYs",
         height: "100%",
         width: "100%",
         playerVars: {
@@ -221,7 +221,6 @@ export default function HomePage() {
                 priority
               />
             </div>
-
           </div>
 
           <div className="mt-24">
@@ -229,7 +228,9 @@ export default function HomePage() {
               <span dangerouslySetInnerHTML={{ __html: t("caseTitle") }} />
             </h1>
             <div className="pt-6 text-lg xs:w-[80%] text-center mx-auto max-w-[700px]">
-                <span dangerouslySetInnerHTML={{ __html: t("caseDescription") }} />
+              <span
+                dangerouslySetInnerHTML={{ __html: t("caseDescription") }}
+              />
             </div>
             <div className="relative sm:pl-32 mt-12 lg:mt-24 sm:pr-32 lg:pr-0 xs:w-[80%] sm:w-full mx-auto">
               <div className="lg:flex text-lg text-sorbifer-dark lg:-ml-14 lg:mr-14">
@@ -464,7 +465,10 @@ export default function HomePage() {
                 priority
               />
             </Link>
-            <Link href="/4" className="relative inline-block pointer-events-none">
+            <Link
+              href="/4"
+              className="relative inline-block pointer-events-none"
+            >
               <div
                 className="w-[300px] h-full bg-gray-200 rounded aspect-[3/2]"
                 aria-label="Locked video placeholder"
@@ -599,52 +603,60 @@ export default function HomePage() {
               id="benefits"
             >
               <h1 className="text-2xl text-sorbifer-dark font-bold">
-                <span dangerouslySetInnerHTML={{ __html: t("benefitsTitle") }} />
+                <span
+                  dangerouslySetInnerHTML={{ __html: t("benefitsTitle") }}
+                />
               </h1>
             </div>
           </div>
-            <Image src="/images/girl.png" className="w-full max-w-[868px]" alt="Background" />
-          
+          <Image
+            src="/images/girl.png"
+            width={868}
+            height={668}
+            className="w-full max-w-[868px]"
+            alt="Background"
+          />
+
           <div className="lg:absolute left-0 top-0 right-0 flex justify-center lg:justify-end">
             <div className="px-4 lg:px-32 pt-12 lg:pt-24 flex lg:justify-end">
               <ul className="lg:mt-32">
                 <li className="mb-8 flex items-end">
                   <Image
-                  src="/images/checkmark.png"
-                  className="mr-8"
-                  alt="Check"
-                  width={22}
-                  height={22}
+                    src="/images/checkmark.png"
+                    className="mr-8"
+                    alt="Check"
+                    width={22}
+                    height={22}
                   />
                   <span dangerouslySetInnerHTML={{ __html: t("benefit1") }} />
                 </li>
                 <li className="mb-8 flex items-end">
                   <Image
-                  src="/images/checkmark.png"
-                  className="mr-8"
-                  alt="Check"
-                  width={22}
-                  height={22}
+                    src="/images/checkmark.png"
+                    className="mr-8"
+                    alt="Check"
+                    width={22}
+                    height={22}
                   />
                   <span dangerouslySetInnerHTML={{ __html: t("benefit2") }} />
                 </li>
                 <li className="mb-8 flex items-end">
                   <Image
-                  src="/images/checkmark.png"
-                  className="mr-8"
-                  alt="Check"
-                  width={22}
-                  height={22}
+                    src="/images/checkmark.png"
+                    className="mr-8"
+                    alt="Check"
+                    width={22}
+                    height={22}
                   />
                   <span dangerouslySetInnerHTML={{ __html: t("benefit3") }} />
                 </li>
                 <li className="mb-8 flex items-end">
                   <Image
-                  src="/images/checkmark.png"
-                  className="mr-8"
-                  alt="Check"
-                  width={22}
-                  height={22}
+                    src="/images/checkmark.png"
+                    className="mr-8"
+                    alt="Check"
+                    width={22}
+                    height={22}
                   />
                   <span dangerouslySetInnerHTML={{ __html: t("benefit4") }} />
                 </li>

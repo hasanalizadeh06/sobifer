@@ -43,7 +43,7 @@ export default function Navbar(): React.JSX.Element {
               <Link href="/knowledgebase" className={`block py-2 ${pathname.slice(3) == "/knowledgebase" ? "font-bold" : ""}`}>{t('navigation.knowledgeBase')}</Link>
             </li>
           </ul>
-          <ul className="hidden md:block mb-8">
+          <ul className="hidden md:block">
             <li>
               <button
                 className="py-2 px-4 -mr-4 uppercase text-sm bg-transparent border-none cursor-pointer"
@@ -80,7 +80,7 @@ export default function Navbar(): React.JSX.Element {
             </li>
           </ul>
           <div className="px-12 pt-8 pb-8 border-t border-sorbifer-light">
-            <ul className="font-bold text-white uppercase -ml-4 mb-8">
+            <ul className="font-bold text-white uppercase ml-4">
           <li>
             <button
               className="py-2 px-4 -mr-4 uppercase text-sm bg-transparent border-none cursor-pointer"
