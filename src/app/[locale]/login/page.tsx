@@ -25,7 +25,7 @@ export default function LoginPage() {
     const data = await res.json();
     setLoading(false);
     if (data.success) {
-      router.push("/");
+      router.push("/1");
     } else {
       setError(t("error"));
     }

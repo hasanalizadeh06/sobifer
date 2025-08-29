@@ -2,7 +2,7 @@
 import { redirect } from "next/navigation"
 
 function page() {
-  redirect('/1')
+  redirect('/login')
   return null
 }
 
