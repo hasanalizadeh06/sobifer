@@ -12,25 +12,25 @@ export default function HomePage() {
   const [message] = useState<string | null>(null);
   const [selected, setSelected] = useState(0);
   const [currentanswer, setCurrentanswer] = useState("0");
-  const [doanswer, setDoanswer] = useState(false);
   const [currentstop, setCurrentstop] = useState(false);
   const [question, setQuestion] = useState({
-      title:t("video2question1Title"),
-      selectAnswer:t("video2question1SelectAnswer"),
-      answer1:t("video2question1Answer1"),
-      answer2:t("video2question1Answer2"),
-      answer3:t("video2question1Answer3"),
-      answer4:"",
-      correctAnswer:t("video2question1CorrectAnswer"),
-      correctFeedback:t("video2question1CorrectFeedback"),
-      incorrectFeedback:t("video2question1IncorrectFeedback"),
-      continueButton:t("video2question1ContinueButton"),
-      number: 1
-    });
+    title: t("video2question1Title"),
+    selectAnswer: t("video2question1SelectAnswer"),
+    answer1: t("video2question1Answer1"),
+    answer2: t("video2question1Answer2"),
+    answer3: t("video2question1Answer3"),
+    answer4: "",
+    correctAnswer: t("video2question1CorrectAnswer"),
+    correctFeedback: t("video2question1CorrectFeedback"),
+    incorrectFeedback: t("video2question1IncorrectFeedback"),
+    continueButton: t("video2question1ContinueButton"),
+    number: 1,
+  });
 
   const video1Ref = useRef<HTMLVideoElement>(null);
   const video2Ref = useRef<HTMLVideoElement>(null);
   const video3Ref = useRef<HTMLVideoElement>(null);
+  const video4Ref = useRef<HTMLVideoElement>(null);
   const videosRef = useRef<HTMLDivElement>(null);
 
   /*
@@ -49,65 +49,65 @@ export default function HomePage() {
   };
   */
 
-
-
-    useEffect(() => {
-          // Initialize YouTube API and player
+  useEffect(() => {
+    // Initialize YouTube API and player
     let ytScript: HTMLScriptElement | null = null;
     let ytPlayer: YT.Player | null = null;
     let ytTimer: NodeJS.Timeout | null = null;
     const videoStops = [221]; // 3:41
-  
-      const onYouTubeIframeAPIReady = () => {
-        ytPlayer = new window.YT.Player("player", {
-          videoId: "AXHchGrCvVI",
-          height: "100%",
-          width: "100%",
-          playerVars: {
-            fs: 0,
-            rel: 0,
-            origin: "http://localhost",
-          },
-          events: {
-            onReady: () => {},
-            onStateChange: (event: { data: number }) => {
-              if (event.data === window.YT.PlayerState.PLAYING) {
-                ytTimer = setInterval(() => {
-                  const current = Math.round(ytPlayer?.getCurrentTime() ?? 0);
-                  const stop = videoStops.indexOf(current);
-                  if (stop > -1) {
-                    ytPlayer?.pauseVideo();
-                    setCurrentstop(true);
-                  }
-                }, 1000); // More frequent check for reliability
-              } else if (event.data === window.YT.PlayerState.PAUSED) {
-                if (ytTimer) {
-                  clearInterval(ytTimer);
-                }
-              }
-            },
-          },
-        });
-      };
-  
-      if (!window.YT) {
-        ytScript = document.createElement("script");
-        ytScript.src = "https://www.youtube.com/iframe_api";
-        document.body.appendChild(ytScript);
-        window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
-      } else {
-        onYouTubeIframeAPIReady();
-      }
-  
-      return () => {
-        // Cleanup timer and player
-        if (ytTimer) clearInterval(ytTimer);
-        if (ytScript) ytScript.remove();
-    delete (window as Partial<Window>).onYouTubeIframeAPIReady;
-      };
-    }, []);
-  
+    let ytPlayerSpeed = 1;
 
+    const onYouTubeIframeAPIReady = () => {
+      ytPlayer = new window.YT.Player("player", {
+        videoId: "AXHchGrCvVI",
+        height: "100%",
+        width: "100%",
+        playerVars: {
+          fs: 0,
+          rel: 0,
+          origin: "http://localhost",
+        },
+        events: {
+          onReady: () => {},
+          onPlaybackRateChange: (event: { data: number }) => {
+            ytPlayerSpeed = event.data;
+          },
+          onStateChange: (event: { data: number }) => {
+            if (event.data === window.YT.PlayerState.PLAYING) {
+              ytTimer = setInterval(() => {
+                const current = Math.round(ytPlayer?.getCurrentTime() ?? 0);
+                const stop = videoStops.indexOf(current);
+                if (stop > -1) {
+                  ytPlayer?.pauseVideo();
+                  setCurrentstop(true);
+                }
+              }, (1 / ytPlayerSpeed) * 1000); // More frequent check for reliability
+            } else if (event.data === window.YT.PlayerState.PAUSED) {
+              if (ytTimer) {
+                clearInterval(ytTimer);
+              }
+            }
+          },
+        },
+      });
+    };
+
+    if (!window.YT) {
+      ytScript = document.createElement("script");
+      ytScript.src = "https://www.youtube.com/iframe_api";
+      document.body.appendChild(ytScript);
+      window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+    } else {
+      onYouTubeIframeAPIReady();
+    }
+
+    return () => {
+      // Cleanup timer and player
+      if (ytTimer) clearInterval(ytTimer);
+      if (ytScript) ytScript.remove();
+      delete (window as Partial<Window>).onYouTubeIframeAPIReady;
+    };
+  }, []);
 
   const stopvideos = () => {
     if (videosRef.current) {
@@ -118,28 +118,25 @@ export default function HomePage() {
     }
   };
 
-   const handleChangeQuestion = (questionNumber: number) => {
-    setQuestion(
-      {
-        title:t(`video2question${questionNumber}Title`),
-        selectAnswer:t(`video2question${questionNumber}SelectAnswer`),
-        answer1:t(`video2question${questionNumber}Answer1`),
-        answer2:t(`video2question${questionNumber}Answer2`),
-        answer3:t(`video2question${questionNumber}Answer3`),
-        answer4:t(`video2question${questionNumber}Answer4`),
-        correctAnswer:t(`video2question${questionNumber}CorrectAnswer`),
-        correctFeedback:t(`video2question${questionNumber}CorrectFeedback`),
-        incorrectFeedback:t(`video2question${questionNumber}IncorrectFeedback`),
-        continueButton:t(`video2question${questionNumber}ContinueButton`),
-        number: questionNumber
-      }
-    )
-  }
+  const handleChangeQuestion = (questionNumber: number) => {
+    setQuestion({
+      title: t(`video2question${questionNumber}Title`),
+      selectAnswer: t(`video2question${questionNumber}SelectAnswer`),
+      answer1: t(`video2question${questionNumber}Answer1`),
+      answer2: t(`video2question${questionNumber}Answer2`),
+      answer3: t(`video2question${questionNumber}Answer3`),
+      answer4: t(`video2question${questionNumber}Answer4`),
+      correctAnswer: t(`video2question${questionNumber}CorrectAnswer`),
+      correctFeedback: t(`video2question${questionNumber}CorrectFeedback`),
+      incorrectFeedback: t(`video2question${questionNumber}IncorrectFeedback`),
+      continueButton: t(`video2question${questionNumber}ContinueButton`),
+      number: questionNumber,
+    });
+  };
 
   const handleAnswer = (answer: string) => {
     setCurrentanswer(answer);
     stopvideos();
-    setDoanswer(true);
 
     // Play corresponding video
     if (answer === "1" && video1Ref.current) {
@@ -151,20 +148,21 @@ export default function HomePage() {
     } else if (answer === "3" && video3Ref.current) {
       video3Ref.current.load();
       video3Ref.current.play();
+    } else if (answer === "4" && video4Ref.current) {
+      video4Ref.current.load();
+      video4Ref.current.play();
     }
   };
 
   const nextQuestion = () => {
-    if(question.number < 3){
-      setCurrentanswer("0");
+    stopvideos();
+    setCurrentanswer("0");
+    if (question.number < 3) {
       handleChangeQuestion(question.number + 1);
     } else {
       handleChangeQuestion(1);
-      stopvideos();
-      setCurrentanswer("0");
       setCurrentstop(false);
     }
-    console.log(question)
   };
 
   return (
@@ -262,7 +260,6 @@ export default function HomePage() {
                 priority
               />
             </div>
-
           </div>
 
           <div className="mt-24">
@@ -270,7 +267,9 @@ export default function HomePage() {
               <span dangerouslySetInnerHTML={{ __html: t("caseTitle") }} />
             </h1>
             <div className="pt-6 text-lg xs:w-[80%] text-center mx-auto max-w-[700px]">
-                <span dangerouslySetInnerHTML={{ __html: t("caseDescription") }} />
+              <span
+                dangerouslySetInnerHTML={{ __html: t("caseDescription") }}
+              />
             </div>
             <div className="relative sm:pl-32 mt-12 lg:mt-24 sm:pr-32 lg:pr-0 xs:w-[80%] sm:w-full mx-auto">
               <div className="lg:flex text-lg text-sorbifer-dark lg:-ml-14 lg:mr-14">
@@ -333,89 +332,97 @@ export default function HomePage() {
                 currentstop !== false ? "block" : "hidden"
               } fixed overflow-y-scroll lg:absolute p-4 lg:p-0 top-0 left-0 h-full w-full bg-white z-10`}
             >
-                <div className="h-full w-full landscape:flex">
+              <div className="h-full w-full landscape:flex">
                 <div className="mt-4 lg:mt-0 w-full landscape:w-2/3 lg:w-2/3 px-8 py-4 xl:px-12 xl:py-8">
                   <h1 className="lg:text-lg xl:text-2xl font-bold">
-                  {question.title}
+                    {question.title}
                   </h1>
                   <div className="lg:mt-4 xl:mt-12 mb-4">
-                  {question.selectAnswer}
+                    {question.selectAnswer}
                   </div>
                   <ul className="lg:pr-24 pb-4">
-                  <li
-                    className={`${
-                    currentanswer === "1"
-                      ? question.correctAnswer == "1" ? "bg-sorbifer-green" : "bg-sorbifer-red"
-                      : "bg-sorbifer-light"
-                    } text-white`}
-                  >
-                    <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleAnswer("1");
-                    }}
-                    className="block w-full h-full p-3 xl:p-4 mb-2 font-bold lg:text-lg xl:text-xl"
-                    >
-                    {question.answer1}
-                    </a>
-                  </li>
-                  <li
-                    className={`${
-                    currentanswer === "2"
-                      ? question.correctAnswer == "2" ? "bg-sorbifer-green" : "bg-sorbifer-red"
-                      : "bg-sorbifer-light"
-                    } text-white`}
-                  >
-                    <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleAnswer("2");
-                    }}
-                    className="block w-full h-full p-3 xl:p-4 mb-2 font-bold lg:text-lg xl:text-xl"
-                    >
-                    {question.answer2}
-                    </a>
-                  </li>
-                  <li
-                    className={`${
-                    currentanswer === "3"
-                      ? question.correctAnswer == "3" ? "bg-sorbifer-green" : "bg-sorbifer-red"
-                      : "bg-sorbifer-light"
-                    } text-white`}
-                  >
-                    <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleAnswer("3");
-                    }}
-                    className="block w-full h-full p-3 xl:p-4 mb-2 font-bold lg:text-lg xl:text-xl"
-                    >
-                    {question.answer3}
-                    </a>
-                  </li>
-                  { question.answer4 != "" && (
                     <li
-                    className={`${
-                    currentanswer === "4"
-                      ? question.correctAnswer == "4" ? "bg-sorbifer-green" : "bg-sorbifer-red"
-                      : "bg-sorbifer-light"
-                    } text-white`}
-                  >
-                    <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleAnswer("4");
-                    }}
-                    className="block w-full h-full p-3 xl:p-4 mb-2 font-bold lg:text-lg xl:text-xl"
+                      className={`${
+                        currentanswer === "1"
+                          ? question.correctAnswer == "1"
+                            ? "bg-sorbifer-green"
+                            : "bg-sorbifer-red"
+                          : "bg-sorbifer-light"
+                      } text-white`}
                     >
-                    {question.answer4}
-                    </a>
-                  </li>
-                  )}
+                      <a
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleAnswer("1");
+                        }}
+                        className="block w-full h-full p-3 xl:p-4 mb-2 font-bold lg:text-lg xl:text-xl"
+                      >
+                        {question.answer1}
+                      </a>
+                    </li>
+                    <li
+                      className={`${
+                        currentanswer === "2"
+                          ? question.correctAnswer == "2"
+                            ? "bg-sorbifer-green"
+                            : "bg-sorbifer-red"
+                          : "bg-sorbifer-light"
+                      } text-white`}
+                    >
+                      <a
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleAnswer("2");
+                        }}
+                        className="block w-full h-full p-3 xl:p-4 mb-2 font-bold lg:text-lg xl:text-xl"
+                      >
+                        {question.answer2}
+                      </a>
+                    </li>
+                    <li
+                      className={`${
+                        currentanswer === "3"
+                          ? question.correctAnswer == "3"
+                            ? "bg-sorbifer-green"
+                            : "bg-sorbifer-red"
+                          : "bg-sorbifer-light"
+                      } text-white`}
+                    >
+                      <a
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleAnswer("3");
+                        }}
+                        className="block w-full h-full p-3 xl:p-4 mb-2 font-bold lg:text-lg xl:text-xl"
+                      >
+                        {question.answer3}
+                      </a>
+                    </li>
+                    {question.answer4 != "" && (
+                      <li
+                        className={`${
+                          currentanswer === "4"
+                            ? question.correctAnswer == "4"
+                              ? "bg-sorbifer-green"
+                              : "bg-sorbifer-red"
+                            : "bg-sorbifer-light"
+                        } text-white`}
+                      >
+                        <a
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleAnswer("4");
+                          }}
+                          className="block w-full h-full p-3 xl:p-4 mb-2 font-bold lg:text-lg xl:text-xl"
+                        >
+                          {question.answer4}
+                        </a>
+                      </li>
+                    )}
                   </ul>
                 </div>
 
@@ -424,78 +431,107 @@ export default function HomePage() {
                   ref={videosRef}
                 >
                   <div className="mx-auto w-full portrait:w-1/2 lg:w-full">
-                  <div className="relative pt-1/1 h-0">
-                    <video
-                    playsInline
-                    ref={video1Ref}
-                    className={`${
-                      currentanswer === "1" ? "block" : "hidden"
-                    } w-full absolute top-0 left-0`}
-                    >
-                    <source src="/video/rus/2.1.1.mp4" type="video/mp4" />
-                    </video>
-                    <video
-                    playsInline
-                    ref={video2Ref}
-                    className={`${
-                      currentanswer === "2" ? "block" : "hidden"
-                    } w-full absolute top-0 left-0`}
-                    >
-                    <source src="/video/rus/2.1.2.mp4" type="video/mp4" />
-                    </video>
-                    <video
-                    playsInline
-                    ref={video3Ref}
-                    className={`${
-                      currentanswer === "3" ? "block" : "hidden"
-                    } w-full absolute top-0 left-0`}
-                    >
-                    <source src="/video/rus/2.1.3.mp4" type="video/mp4" />
-                    </video>
-                    <div
+                    <div className="relative pt-1/1 h-0">
+                      <video
+                        playsInline
+                        ref={video1Ref}
+                        className={`${
+                          currentanswer === "1" ? "block" : "hidden"
+                        } w-full absolute top-0 left-0`}
+                      >
+                        <source
+                          src={`/images/2.${question.number}.1.mp4`}
+                          type="video/mp4"
+                        />
+                      </video>
+                      <video
+                        playsInline
+                        ref={video2Ref}
+                        className={`${
+                          currentanswer === "2" ? "block" : "hidden"
+                        } w-full absolute top-0 left-0`}
+                      >
+                        <source
+                          src={`/images/2.${question.number}.2.mp4`}
+                          type="video/mp4"
+                        />
+                      </video>
+                      <video
+                        playsInline
+                        ref={video3Ref}
+                        className={`${
+                          currentanswer === "3" ? "block" : "hidden"
+                        } w-full absolute top-0 left-0`}
+                      >
+                        <source
+                          src={`/images/2.${question.number}.3.mp4`}
+                          type="video/mp4"
+                        />
+                      </video>
+                      {question.answer4 != "" && (
+                        <video
+                          playsInline
+                          ref={video4Ref}
+                          className={`${
+                            currentanswer === "4" ? "block" : "hidden"
+                          } w-full absolute top-0 left-0`}
+                        >
+                          <source
+                            src={`/images/2.${question.number}.4.mp4`}
+                            type="video/mp4"
+                          />
+                        </video>
+                      )}
+                      {/* <div
                     className={`absolute top-0 left-0 w-full h-full bg-white/100 transition delay-300 ${
                       doanswer ? "bg-white/0" : "bg-white/100"
                     }`}
-                    ></div>
-                  </div>
-                  </div>
-
-                  <div
-                  className={`portrait:text-center mt-8 landscape:mt-4 lg:mt-12 landscape:text-xs lg:text-base ${
-                    currentanswer != '0' ? "block" : "hidden"
-                  }`}
-                  >
-                  <div
-                    className={`text-sorbifer-green ${
-                    currentanswer == question.correctAnswer ? "block" : "hidden"
-                    }`}
-                  >
-                    {question.correctFeedback}
-                  </div>
-                  <div
-                    className={`text-sorbifer-red ${
-                    currentanswer != question.correctAnswer ? "block" : "hidden"
-                    }`}
-                  >
-                    {question.incorrectFeedback}
-                  </div>
+                    ></div> */}
+                    </div>
                   </div>
 
                   <div
-                  className={`text-center w-full min-h-20 ${
-                    currentanswer == question.correctAnswer ? "block" : "hidden"
-                  }`}
+                    className={`portrait:text-center mt-8 landscape:mt-4 lg:mt-12 landscape:text-xs lg:text-base ${
+                      currentanswer != "0" ? "block" : "hidden"
+                    }`}
                   >
-                  <button
-                    onClick={nextQuestion}
-                    className="inline-block bg-sorbifer-dark rounded-xl landscape:text-xs lg:text-base py-4 px-4 lg:px-8 mt-4 lg:mt-12 font-bold text-white"
-                  >
-                    {question.continueButton}
-                  </button>
+                    <div
+                      className={`text-sorbifer-green ${
+                        currentanswer == question.correctAnswer
+                          ? "block"
+                          : "hidden"
+                      }`}
+                    >
+                      {question.correctFeedback}
+                    </div>
+                    <div
+                      className={`text-sorbifer-red ${
+                        currentanswer != question.correctAnswer
+                          ? "block"
+                          : "hidden"
+                      }`}
+                    >
+                      {question.incorrectFeedback}
+                    </div>
                   </div>
-                </div>
+
+                  <div
+                    className={`text-center w-full min-h-20 ${
+                      currentanswer == question.correctAnswer
+                        ? "block"
+                        : "hidden"
+                    }`}
+                  >
+                    <button
+                      onClick={nextQuestion}
+                      className="inline-block bg-sorbifer-dark rounded-xl landscape:text-xs lg:text-base py-4 px-4 lg:px-8 mt-4 lg:mt-12 font-bold text-white"
+                    >
+                      {question.continueButton}
+                    </button>
+                  </div>
                 </div>
               </div>
+            </div>
           </div>
 
           <div className="bg-sorbifer-light text-center py-8 px-12">
@@ -525,7 +561,10 @@ export default function HomePage() {
                 priority
               />
             </Link>
-            <Link href="/4" className="relative inline-block pointer-events-none">
+            <Link
+              href="/4"
+              className="relative inline-block pointer-events-none"
+            >
               <div
                 className="w-[300px] h-full bg-gray-200 rounded aspect-[3/2]"
                 aria-label="Locked video placeholder"
@@ -672,52 +711,60 @@ export default function HomePage() {
               id="benefits"
             >
               <h1 className="text-2xl text-sorbifer-dark font-bold">
-                <span dangerouslySetInnerHTML={{ __html: t("benefitsTitle") }} />
+                <span
+                  dangerouslySetInnerHTML={{ __html: t("benefitsTitle") }}
+                />
               </h1>
             </div>
           </div>
-            <Image src="/images/girl.png" width={868} height={668}  className="w-full max-w-[868px]" alt="Background" />
-          
+          <Image
+            src="/images/girl.png"
+            width={868}
+            height={668}
+            className="w-full max-w-[868px]"
+            alt="Background"
+          />
+
           <div className="lg:absolute left-0 top-0 right-0 flex justify-center lg:justify-end">
             <div className="px-4 lg:px-32 pt-12 lg:pt-24 flex lg:justify-end">
               <ul className="lg:mt-32">
                 <li className="mb-8 flex items-end">
                   <Image
-                  src="/images/checkmark.png"
-                  className="mr-8"
-                  alt="Check"
-                  width={22}
-                  height={22}
+                    src="/images/checkmark.png"
+                    className="mr-8"
+                    alt="Check"
+                    width={22}
+                    height={22}
                   />
                   <span dangerouslySetInnerHTML={{ __html: t("benefit1") }} />
                 </li>
                 <li className="mb-8 flex items-end">
                   <Image
-                  src="/images/checkmark.png"
-                  className="mr-8"
-                  alt="Check"
-                  width={22}
-                  height={22}
+                    src="/images/checkmark.png"
+                    className="mr-8"
+                    alt="Check"
+                    width={22}
+                    height={22}
                   />
                   <span dangerouslySetInnerHTML={{ __html: t("benefit2") }} />
                 </li>
                 <li className="mb-8 flex items-end">
                   <Image
-                  src="/images/checkmark.png"
-                  className="mr-8"
-                  alt="Check"
-                  width={22}
-                  height={22}
+                    src="/images/checkmark.png"
+                    className="mr-8"
+                    alt="Check"
+                    width={22}
+                    height={22}
                   />
                   <span dangerouslySetInnerHTML={{ __html: t("benefit3") }} />
                 </li>
                 <li className="mb-8 flex items-end">
                   <Image
-                  src="/images/checkmark.png"
-                  className="mr-8"
-                  alt="Check"
-                  width={22}
-                  height={22}
+                    src="/images/checkmark.png"
+                    className="mr-8"
+                    alt="Check"
+                    width={22}
+                    height={22}
                   />
                   <span dangerouslySetInnerHTML={{ __html: t("benefit4") }} />
                 </li>

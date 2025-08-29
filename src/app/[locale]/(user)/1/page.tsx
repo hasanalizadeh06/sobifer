@@ -12,7 +12,6 @@ export default function HomePage() {
   const [message] = useState<string | null>(null);
   const [selected, setSelected] = useState(0);
   const [currentanswer, setCurrentanswer] = useState("0");
-  const [doanswer, setDoanswer] = useState(false);
   const [currentstop, setCurrentstop] = useState(false);
   const [question, setQuestion] = useState({
     title:t("video1question1Title"),
@@ -31,6 +30,7 @@ export default function HomePage() {
   const video1Ref = useRef<HTMLVideoElement>(null);
   const video2Ref = useRef<HTMLVideoElement>(null);
   const video3Ref = useRef<HTMLVideoElement>(null);
+  const video4Ref = useRef<HTMLVideoElement>(null);
   const videosRef = useRef<HTMLDivElement>(null);
 
 
@@ -51,10 +51,10 @@ export default function HomePage() {
   */
 
   useEffect(() => {
-        // Initialize YouTube API and player
   let ytScript: HTMLScriptElement | null = null;
   let ytPlayer: YT.Player | null = null;
   let ytTimer: NodeJS.Timeout | null = null;
+  let ytPlayerSpeed = 1;
   const videoStops = [146]; // 2:26
 
     const onYouTubeIframeAPIReady = () => {
@@ -69,6 +69,9 @@ export default function HomePage() {
         },
         events: {
           onReady: () => {},
+          onPlaybackRateChange: (event: { data: number }) => {
+            ytPlayerSpeed = event.data;
+          },
           onStateChange: (event: { data: number }) => {
             if (event.data === window.YT.PlayerState.PLAYING) {
               ytTimer = setInterval(() => {
@@ -78,7 +81,7 @@ export default function HomePage() {
                   ytPlayer?.pauseVideo();
                   setCurrentstop(true);
                 }
-              }, 1000); // More frequent check for reliability
+              }, ((1 / ytPlayerSpeed) * 1000)); // More frequent check for reliability
             } else if (event.data === window.YT.PlayerState.PAUSED) {
               if (ytTimer) {
                 clearInterval(ytTimer);
@@ -136,7 +139,6 @@ export default function HomePage() {
   const handleAnswer = (answer: string) => {
     setCurrentanswer(answer);
     stopvideos();
-    setDoanswer(true);
 
     // Play corresponding video
     if (answer === "1" && video1Ref.current) {
@@ -148,20 +150,21 @@ export default function HomePage() {
     } else if (answer === "3" && video3Ref.current) {
       video3Ref.current.load();
       video3Ref.current.play();
+    } else if (answer === "4" && video4Ref.current) {
+      video4Ref.current.load();
+      video4Ref.current.play();
     }
   };
 
   const nextQuestion = () => {
+    stopvideos();
+    setCurrentanswer("0");
     if(question.number < 3){
-      setCurrentanswer("0");
       handleChangeQuestion(question.number + 1);
     } else {
       handleChangeQuestion(1);
-      stopvideos();
-      setCurrentanswer("0");
       setCurrentstop(false);
     }
-    console.log(question)
   };
 
   return (
@@ -430,7 +433,7 @@ export default function HomePage() {
                       currentanswer === "1" ? "block" : "hidden"
                     } w-full absolute top-0 left-0`}
                     >
-                    <source src="/video/rus/2.1.1.mp4" type="video/mp4" />
+                    <source src={`/images/${question.number}.1.mp4`} type="video/mp4" />
                     </video>
                     <video
                     playsInline
@@ -439,7 +442,7 @@ export default function HomePage() {
                       currentanswer === "2" ? "block" : "hidden"
                     } w-full absolute top-0 left-0`}
                     >
-                    <source src="/video/rus/2.1.2.mp4" type="video/mp4" />
+                    <source src={`/images/${question.number}.2.mp4`} type="video/mp4" />
                     </video>
                     <video
                     playsInline
@@ -448,13 +451,24 @@ export default function HomePage() {
                       currentanswer === "3" ? "block" : "hidden"
                     } w-full absolute top-0 left-0`}
                     >
-                    <source src="/video/rus/2.1.3.mp4" type="video/mp4" />
+                    <source src={`/images/${question.number}.3.mp4`} type="video/mp4" />
                     </video>
-                    <div
+                    { question.answer4 != "" && (
+                    <video
+                    playsInline
+                    ref={video4Ref}
+                    className={`${
+                      currentanswer === "4" ? "block" : "hidden"
+                    } w-full absolute top-0 left-0`}
+                    >
+                    <source src={`/images/${question.number}.4.mp4`} type="video/mp4" />
+                    </video>
+                    )}
+                    {/* <div
                     className={`absolute top-0 left-0 w-full h-full bg-white/100 transition delay-300 ${
                       doanswer ? "bg-white/0" : "bg-white/100"
                     }`}
-                    ></div>
+                    ></div> */}
                   </div>
                   </div>
 

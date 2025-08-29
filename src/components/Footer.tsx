@@ -2,6 +2,7 @@
 import React from "react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Footer(): React.JSX.Element {
   const t = useTranslations("HomePage");
@@ -22,7 +23,7 @@ export default function Footer(): React.JSX.Element {
           {t('representation')}<br />
           {t('address')}<br />
           {t('phone')}<br />
-          <a href={`mailto:${t('email')}`}>{t('email')}</a>
+          <Link href={`mailto:${t('email')}`}>{t('email')}</Link>
         </div>
       </div>
     </footer>
