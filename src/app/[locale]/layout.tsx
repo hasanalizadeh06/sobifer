@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { routing } from "@/lib/i18n/routing";
 import { notFound } from "next/navigation";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import ConditionalNavbar from "@/components/ConditionalNavbar";
+import ConditionalFooter from "@/components/ConditionalFooter";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,7 +17,6 @@ export default async function LocaleLayout({
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
-  // Ensure that the incoming `locale` is valid
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) {
     notFound();
@@ -26,9 +25,9 @@ export default async function LocaleLayout({
   return (
     <div className="bg-white">
       <NextIntlClientProvider>
-        <Navbar />
+        <ConditionalNavbar />
         <div>{children}</div>
-        <Footer />
+        <ConditionalFooter />
       </NextIntlClientProvider>
     </div>
   );
