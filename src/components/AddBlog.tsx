@@ -6,18 +6,20 @@ import { parseCookies } from "nookies";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 
+
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 import "react-quill-new/dist/quill.snow.css";
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+import { useTranslations } from "next-intl";
 
 interface AddBlogProps {
   onSuccess?: () => void;
 }
 
 export default function AddBlog({ onSuccess }: AddBlogProps) {
+  const t = useTranslations("Admin");
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [title, setTitle] = useState<{ ru: string; az: string }>({ ru: "", az: "" });
+  const [content, setContent] = useState<{ ru: string; az: string }>({ ru: "", az: "" });
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,23 +37,19 @@ export default function AddBlog({ onSuccess }: AddBlogProps) {
       if (input.files && input.files[0]) {
         const file = input.files[0];
         if (file.type === "image/gif") {
-          alert("GIF images are not allowed. Please select PNG, JPG, or WEBP.");
+          alert(t("gifNotAllowed"));
           return;
         }
         setImageFiles((prev) => {
           console.log("Adding image file:", file);
           return [...prev, file];
         });
-        console.log(content)
         // Use Quill's API to insert placeholder
         const quill = this.quill;
         if (quill) {
           const placeholder = `[IMAGE:${imageFiles.length}]`;
           const range = quill.getSelection(true);
-          console.log("Quill found, inserting placeholder at range:", range);
           quill.insertText(range ? range.index : 0, placeholder);
-        } else {
-          console.log("Quill instance not found");
         }
       } else {
         console.log("No file selected");
@@ -80,12 +78,17 @@ export default function AddBlog({ onSuccess }: AddBlogProps) {
     setError(null);
     try {
       const formData = new FormData();
-      formData.append("title", title);
-      formData.append("content", content);
+      // Append each field of title and content as separate keys
+      Object.entries(title).forEach(([key, value]) => {
+        formData.append(`title[${key}]`, value);
+      });
+      Object.entries(content).forEach(([key, value]) => {
+        formData.append(`content[${key}]`, value);
+      });
       imageFiles.forEach((file) => {
         formData.append("images", file);
       });
-      await axios.post(API_URL + "/blogs", formData, {
+      await axios.post(process.env.NEXT_PUBLIC_API_URL + "/blogs", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${cookies.accessToken}`,
@@ -94,15 +97,15 @@ export default function AddBlog({ onSuccess }: AddBlogProps) {
       setLoading(false);
       if (onSuccess) onSuccess();
       setOpen(false);
-      setTitle("");
-      setContent("");
+      setTitle({ ru: "", az: "" });
+      setContent({ ru: "", az: "" });
       setImageFiles([]);
-  } catch (err: unknown) {
+    } catch (err: unknown) {
       setLoading(false);
       if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || "Failed to add blog.");
+        setError(err.response?.data?.message || t("addBlogError"));
       } else {
-        setError("Failed to add blog.");
+        setError(t("addBlogError"));
       }
     }
   };
@@ -111,76 +114,104 @@ export default function AddBlog({ onSuccess }: AddBlogProps) {
     <>
       <div className="bg-gradient-to-r text-white from-purple-500 to-blue-500 rounded-2xl shadow-2xl hover:from-purple-600 hover:to-blue-600 transition-all duration-[2000ms] border-4 border-purple-200">
         <button
-            className="w-full py-14 text-2xl font-extrabold"
-            style={{ minHeight: 50 }}
-            onClick={() => setOpen(true)}
-            >
-            + Add New Blog
+          className="w-full py-14 text-2xl font-extrabold"
+          style={{ minHeight: 50 }}
+          onClick={() => setOpen(true)}
+        >
+          {t("addNewBlogButton")}
         </button>
       </div>
-    <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/40 z-50" />
-        <Dialog.Content
-          className="z-50 fixed left-1/2 top-1/2 bg-white rounded-lg shadow-xl p-8 w-[80%] h-[80%] max-w-3xl max-h-[80vh] -translate-x-1/2 -translate-y-1/2 focus:outline-none flex flex-col"
-          style={{ transform: "translate(-50%, -50%)" }}
-        >
-          <Dialog.Title className="text-2xl font-bold mb-4 flex items-center justify-between">
-            Add New Blog
-            <Dialog.Close asChild>
-              <button
-                className="text-gray-400 hover:text-gray-700"
-                aria-label="Close"
-              >
-                <Cross2Icon width={24} height={24} />
-              </button>
-            </Dialog.Close>
-          </Dialog.Title>
-          <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
-            <input
-              type="text"
-              value={title}
-              onChange={e => setTitle(e.target.value)}
-              placeholder="Title"
-              className="w-full px-4 py-2 border rounded mb-2 text-lg"
-              required
-            />
-            <div className="flex-1 flex flex-col min-h-0">
-              <ReactQuill
-                value={content}
-                onChange={setContent}
-                theme="snow"
-                modules={modules}
-                className="flex-1 h-full"
-                style={{ minHeight: 0, height: "100%" }}
-              />
-            </div>
-            {error && <div className="text-red-500 text-sm">{error}</div>}
-            <div className="text-xs text-gray-500 m-2">
-              Images: {imageFiles.length} | Content length: {content.length}
-            </div>
-            <div className="flex gap-2 mt-4 justify-end">
+      <Dialog.Root open={open} onOpenChange={setOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-black/40 z-50" />
+          <Dialog.Content
+            className="z-50 fixed left-1/2 top-1/2 bg-white overflow-x-scroll rounded-lg shadow-xl p-8 w-[80%] h-[80%] max-w-3xl max-h-[80vh] -translate-x-1/2 -translate-y-1/2 focus:outline-none flex flex-col"
+            style={{ transform: "translate(-50%, -50%)" }}
+          >
+            <Dialog.Title className="text-2xl font-bold mb-4 flex items-center justify-between">
+              {t("addNewBlogTitle")}
               <Dialog.Close asChild>
                 <button
-                  type="button"
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                  disabled={loading}
+                  className="text-gray-400 hover:text-gray-700"
+                  aria-label="Close"
                 >
-                  Cancel
+                  <Cross2Icon width={24} height={24} />
                 </button>
               </Dialog.Close>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 disabled:opacity-60"
-                disabled={loading}
-              >
-                {loading ? "Submitting..." : "Submit"}
-              </button>
-            </div>
-          </form>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+            </Dialog.Title>
+            <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
+              <div className="flex gap-2 mb-2">
+                <input
+                  type="text"
+                  value={title.az}
+                  onChange={(e) => setTitle({ ...title, az: e.target.value })}
+                  placeholder={t("titleAz")}
+                  className="w-full px-4 py-2 border rounded text-lg"
+                  required
+                />
+                <input
+                  type="text"
+                  value={title.ru}
+                  onChange={(e) => setTitle({ ...title, ru: e.target.value })}
+                  placeholder={t("titleRu")}
+                  className="w-full px-4 py-2 border rounded text-lg"
+                  required
+                />
+              </div>
+              <div className="flex-1 flex flex-col min-h-0 gap-18">
+                <div>
+                  <label className="block text-sm font-semibold mb-1">
+                    {t("contentAz")}
+                  </label>
+                  <ReactQuill
+                    value={content.az}
+                    onChange={(val) => setContent({ ...content, az: val })}
+                    theme="snow"
+                    modules={modules}
+                    className="h-32 max-h-[300px]"
+                    style={{ minHeight: 0, height: "100%" }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1">
+                    {t("contentRu")}
+                  </label>
+                  <ReactQuill
+                    value={content.ru}
+                    onChange={(val) => setContent({ ...content, ru: val })}
+                    theme="snow"
+                    modules={modules}
+                    className="h-32 max-h-[300px]"
+                    style={{ minHeight: 0, height: "100%" }}
+                  />
+                </div>
+              </div>
+              {error && <div className="text-red-500 text-sm">{error}</div>}
+              <div className="text-xs text-gray-500 mt-20">
+                {t("images")} {imageFiles.length} | {t("contentLengthAz")} {content.az.length}, {t("contentLengthRu")} {content.ru.length}
+              </div>
+              <div className="flex gap-2 mt-4 justify-end">
+                <Dialog.Close asChild>
+                  <button
+                    type="button"
+                    className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                    disabled={loading}
+                  >
+                    {t("cancel")}
+                  </button>
+                </Dialog.Close>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 disabled:opacity-60"
+                  disabled={loading}
+                >
+                  {loading ? t("submitting") : t("submit")}
+                </button>
+              </div>
+            </form>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </>
   );
 }
