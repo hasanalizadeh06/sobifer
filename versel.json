@@ -1,0 +1,21 @@
+{
+    "name": "sorbifer-front-vercel",
+    "version": "1.0.0",
+    "description": "Configuration for Sorbifer Frontend on Vercel",
+    "scripts": {},
+    "dependencies": {},
+    "vercel": {
+        "builds": [
+            {
+                "src": "src/index.js",
+                "use": "@vercel/node"
+            }
+        ],
+        "routes": [
+            {
+                "src": "/(.*)",
+                "dest": "/src/index.js"
+            }
+        ]
+    }
+}
