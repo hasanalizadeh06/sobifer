@@ -100,7 +100,7 @@ export default function AdminLayout({
           <div className="p-6 border-b">
             <Link href="/" className="flex items-center space-x-2">
               <Image
-                src="/images/logo.png"
+                src={typeof window !== 'undefined' && window.location.pathname.split('/')[1] === 'az' ? '/images/logo_az.png' : '/images/logo.png'}
                 alt="Logo"
                 className="h-20 w-full"
                 width={1000}
@@ -200,7 +200,7 @@ export default function AdminLayout({
                     />
                   ) : (
                     <Image
-                      src={user?.photo || '/images/logo.png'}
+                      src={user?.photo || (typeof window !== 'undefined' && window.location.pathname.split('/')[1] === 'az' ? '/images/logo_az.png' : '/images/logo.png')}
                       alt="Current"
                       width={80}
                       height={80}

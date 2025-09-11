@@ -12,11 +12,13 @@ export default function Navbar(): React.JSX.Element {
   const pathname = usePathname();
   const [localeLabel, setLocaleLabel] = useState('AZ');
 
+  // Determine current locale from pathname
+  const currentLocale = pathname ? pathname.split('/')[1] : 'az';
+  const logoSrc = currentLocale === 'az' ? '/images/logo_az.png' : '/images/logo.png';
+
   useEffect(() => {
-    const currentLocale = window.location.pathname.split('/')[1];
     setLocaleLabel(currentLocale === 'ru' ? 'RU' : 'AZ');
-  }, []);
-  console.log(pathname);
+  }, [currentLocale]);
 
   return (
     <header>
@@ -26,7 +28,7 @@ export default function Navbar(): React.JSX.Element {
             <Link className="block" href="/">
             <span className="block h-[66px] w-[100px] relative">
               <Image
-              src={logo}
+              src={logoSrc}
               alt="Logo"
               fill
               style={{ objectFit: "contain" }}

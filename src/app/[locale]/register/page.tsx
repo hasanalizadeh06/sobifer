@@ -24,7 +24,7 @@ export default function RegisterPage() {
       <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
         <div>
           <Link href="/">
-            <Image src="/images/logo.png" width={200} height={80} alt="Logo" />
+            <Image src={typeof window !== 'undefined' && window.location.pathname.split('/')[1] === 'az' ? '/images/logo_az.png' : '/images/logo.png'} width={200} height={80} alt="Logo" />
           </Link>
         </div>
         <div className="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">

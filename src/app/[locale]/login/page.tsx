@@ -35,7 +35,7 @@ export default function LoginPage() {
     <div className="font-sans text-gray-900 antialiased min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-[rgb(243,244,246)]">
       <div>
         <Link href="/">
-          <Image src="/images/logo.png" alt="Logo" width={100} height={40} />
+          <Image src={typeof window !== 'undefined' && window.location.pathname.split('/')[1] === 'az' ? '/images/logo_az.png' : '/images/logo.png'} alt="Logo" width={100} height={40} />
         </Link>
       </div>
       <div className="flex max-w-screen-lg w-full justify-center gap-2 flex-wrap md:flex-nowrap">
